@@ -1,34 +1,31 @@
 ﻿using System;
 
-namespace TextAdventureRPG
+class EnemyEncounter
 {
-	public class EnemyEncounter
+	protected Character[] enemies;
+
+	public EnemyEncounter(Character[] enemies)
 	{
-		protected Character[] enemies;
+		this.enemies = enemies;
+	}
 
-		public EnemyEncounter(Character[] enemies)
+	public bool Start()
+	{
+		Console.Clear();
+		Console.WriteLine("ENEMY ENCOUNTER!");
+		Console.WriteLine("");
+
+		foreach (Character enemy in enemies)
 		{
-			this.enemies = enemies;
+			Console.WriteLine("VS Level " + enemy.GetLevel() + " " + enemy.name + "!");
 		}
 
-		public bool Start()
-		{
-			Console.Clear();
-			Console.WriteLine("ENEMY ENCOUNTER!");
-			Console.WriteLine("");
+		Console.WriteLine("");
+		Console.WriteLine("(Battle system not yet implemented)");
+		Console.WriteLine("[Press ENTER to continue]");
 
-			foreach (Character enemy in enemies)
-			{
-				Console.WriteLine("VS " + enemy.name + "!");
-			}
+		Console.ReadLine();
 
-			Console.WriteLine("");
-			Console.WriteLine("(Battle system not yet implemented)");
-			Console.WriteLine("[Press ENTER to continue]");
-
-			Console.ReadLine();
-
-			return true;
-		}
+		return true;
 	}
 }
