@@ -2,46 +2,39 @@
 
 class RandomEncounterGenerator
 {
-	static Random random;
+	Enemy[] possibleEnemies;
 
-	Character[] possibleEnemies;
-	float likelihood;
+	int minimumEnemyLevel;
+	int maximumEnemyLevel;
+
 	int minimumEnemyCount;
 	int maximumEnemyCount;
 
-	public RandomEncounterGenerator(Character[] possibleEnemies, float likelihood, int minimumEnemyCount, int maximumEnemyCount)
+	public RandomEncounterGenerator(Enemy[] possibleEnemies, int minimumEnemyLevel, int maximumEnemyLevel, int minimumEnemyCount, int maximumEnemyCount)
 	{
-		if (random == null)
-		{
-			random = new Random();
-		}
-
 		this.possibleEnemies = possibleEnemies;
-		this.likelihood = likelihood;
+
+		this.minimumEnemyLevel = minimumEnemyLevel;
+		this.maximumEnemyLevel = maximumEnemyLevel;
+
 		this.minimumEnemyCount = minimumEnemyCount;
 		this.maximumEnemyCount = maximumEnemyCount;
 	}
 
 	public EnemyEncounter CreateEncounter()
 	{
-		float randomChance = (float)random.NextDouble();
-		bool startEncounter = (randomChance < likelihood);
-
-		if (startEncounter == false)
-		{
-			return null;
-		}
-
-		int enemyCount = random.Next(minimumEnemyCount, maximumEnemyCount + 1);
-		Character[] enemies = new Character[enemyCount];
+		int enemyCount = Program.random.Next(minimumEnemyCount, maximumEnemyCount + 1);
+		Enemy[] enemies = new Enemy[enemyCount];
 
 		for (int i = 0; i < enemies.Length; i++)
 		{
-			int randomEnemyIndex = random.Next(possibleEnemies.Length);
+			int randomEnemyIndex = Program.random.Next(possibleEnemies.Length);
 			enemies[i] = possibleEnemies[randomEnemyIndex].CreateCopy();
+
+			int randomEnemyLevel = Program.random.Next(minimumEnemyLevel, maximumEnemyLevel + 1);
 		}
 
-		EnemyEncounter encounter = new EnemyEncounter(enemies);
+		EnemyEncounter encounter = new EnemyEncounter(enemies, true);
 
 		return encounter;
 	}

@@ -30,7 +30,7 @@ class Pronouns
 		public static Pronouns zie = new Pronouns("zie", "zim", "zir", "zirs", "zirself");
 		public static Pronouns it = new Pronouns("it", "it", "its", "its", "itself");
 
-		public static Pronouns[] nonbinary = new Pronouns[] { they, ey, e, per, sie, ve, zie, it };
+		public static Pronouns[] nonbinary = new Pronouns[] { they, ey, e, per, sie, ve, zie };
 	}
 
 	public static Pronouns CreateCustom()

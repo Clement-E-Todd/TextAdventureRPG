@@ -43,10 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ability.cs" />
+    <Compile Include="AbilityDatabase.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="CustomCharacterCreator.cs" />
+    <Compile Include="Enemy.cs" />
+    <Compile Include="EnemyDatabase.cs" />
     <Compile Include="EnemyEncounter.cs" />
     <Compile Include="ExampleGame.cs" />
-    <Compile Include="Gender.cs" />
+    <Compile Include="PlayerCharacter.cs" />
+    <Compile Include="Pronouns.cs" />
+    <Compile Include="PlayerData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomEncounterGenerator.cs" />

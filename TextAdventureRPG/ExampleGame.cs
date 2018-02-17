@@ -1,27 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 
 static class ExampleGame
 {
-	public static List<Character> heroes = new List<Character>();
-	public static int gold = 100;
 	public static bool quitRequested = false;
 
 	const int maxHeroCount = 4;
 	const int costOfHeroByLevel = 250;
+
+	static RandomEncounterGenerator beginnerTier = new RandomEncounterGenerator(
+		new Enemy[] {
+			EnemyDatabase.Example.rat,
+			EnemyDatabase.Example.spider,
+			EnemyDatabase.Example.slime },
+		1, 3,
+		1, 3);
 
 	public static void Run()
 	{
 		// Introduce the plot of the game...
 		Console.WriteLine("The Dark Lord has risen, spreading evil across the land!");
 		Console.WriteLine("A hero must rise to defeat his legions of monsters.");
-		Console.WriteLine("");
-		Console.WriteLine("[Press ENTER to continue]");
-		Console.ReadLine();
+		Program.PressEnterToContinue();
 
 		// Create the main character and add them to the party...
-		Character mainCharacter = Character.CreatePlayerCharacter();
-		heroes.Add(mainCharacter);
+		PlayerCharacter mainCharacter = CustomCharacterCreator.CreatePlayerCharacter();
+		PlayerData.party.Add(mainCharacter);
 
 		// Main loop of the game where the player decides what they'd like to do next...
 		while (quitRequested == false)
@@ -65,14 +68,59 @@ static class ExampleGame
 				}
 			}
 		}
-
-		// Pause before ending the game...
-		Console.WriteLine("[Press ENTER to end the game]");
-		Console.ReadLine();
 	}
 
 	static void BattleMonsters()
 	{
+		Console.Clear();
+
+		Console.WriteLine("BATTLE!");
+		Console.WriteLine("");
+		Console.WriteLine("Which tier of monsters will you challenge?");
+		Console.WriteLine("[1] Beginner tier");
+		Console.WriteLine("[2] Bronze tier");
+		Console.WriteLine("[3] Silver tier");
+		Console.WriteLine("[4] Gold tier");
+		Console.WriteLine("[5] Challenge the Dark Lord");
+		Console.WriteLine("[X] Cancel");
+
+		string userInput = Console.ReadLine().ToLower();
+		EnemyEncounter encounter = null;
+
+		if (userInput == "1")
+		{
+			encounter = beginnerTier.CreateEncounter();
+		}
+		else if (userInput == "2")
+		{
+			Console.WriteLine("Not supported yet.");
+			Program.PressEnterToContinue();
+		}
+		else if (userInput == "3")
+		{
+			Console.WriteLine("Not supported yet.");
+			Program.PressEnterToContinue();
+		}
+		else if (userInput == "4")
+		{
+			Console.WriteLine("Not supported yet.");
+			Program.PressEnterToContinue();
+		}
+		else if (userInput == "5")
+		{
+			Console.WriteLine("Not supported yet.");
+			Program.PressEnterToContinue();
+		}
+		else if (userInput != "x")
+		{
+			Console.WriteLine("Invalid selection.");
+			Program.PressEnterToContinue();
+		}
+
+		if (encounter != null)
+		{
+			encounter.Start();
+		}
 	}
 
 	static void ViewHeroStats()
@@ -84,10 +132,10 @@ static class ExampleGame
 		Console.WriteLine("");
 
 		// List out all of the heroes in the player's party.
-		for (int i = 0; i < heroes.Count; i++)
+		for (int i = 0; i < PlayerData.party.Count; i++)
 		{
 			int heroNumber = i + 1;
-			Console.WriteLine("[" + heroNumber + "] " + heroes[i].name);
+			Console.WriteLine("[" + heroNumber + "] " + PlayerData.party[i].name);
 		}
 		Console.WriteLine("[X] Cancel");
 
@@ -105,9 +153,9 @@ static class ExampleGame
 		bool heroIndexValid = int.TryParse(userInput, out selectedHeroNumber);
 
 		// If a valid hero was selected, show their stats
-		if (heroIndexValid && selectedHeroNumber > 0 && selectedHeroNumber <= heroes.Count)
+		if (heroIndexValid && selectedHeroNumber > 0 && selectedHeroNumber <= PlayerData.party.Count)
 		{
-			Character selectedHero = heroes[selectedHeroNumber - 1];
+			Character selectedHero = PlayerData.party[selectedHeroNumber - 1];
 			selectedHero.DisplayStats();
 		}
 
@@ -115,10 +163,12 @@ static class ExampleGame
 		else
 		{
 			Console.WriteLine("Invalid selection.");
-			Console.WriteLine("");
-			Console.WriteLine("[Press ENTER to continue]");
-			Console.ReadLine();
+			Program.PressEnterToContinue();
 		}
+	}
+
+	static void BuyAbility()
+	{
 	}
 
 	static void HireHero()
@@ -128,7 +178,7 @@ static class ExampleGame
 		Console.WriteLine("");
 
 		// Don't allow the player to hire a new hero if the party size limit is hit
-		if (heroes.Count >= maxHeroCount)
+		if (PlayerData.party.Count >= maxHeroCount)
 		{
 			Console.WriteLine("You cannot hire more heroes; your party is full!");
 		}
@@ -137,7 +187,7 @@ static class ExampleGame
 		// That will be the highest level that the player is allowed to hire.
 		int highestLevel = 1;
 
-		foreach (Character hero in heroes)
+		foreach (PlayerCharacter hero in PlayerData.party)
 		{
 			if (hero.GetLevel() > highestLevel)
 			{
@@ -158,34 +208,30 @@ static class ExampleGame
 		if (validNumberEntered == false || desiredLevel < 1 || desiredLevel > highestLevel)
 		{
 			Console.WriteLine("You can't hire a hero at that level!");
-			Console.WriteLine("");
-			Console.WriteLine("[Press ENTER to continue]");
-			Console.ReadLine();
+			Program.PressEnterToContinue();
 			return;
 		}
 
 		// Tell the player how much the hero will cost to hire (and how much gold they currently have)
 		int price = desiredLevel * costOfHeroByLevel;
 		Console.WriteLine("A level " + desiredLevel + " hero will cost you " + price + " gold.");
-		Console.WriteLine("(You currently have " + gold + " gold)");
+		Console.WriteLine("(You currently have " + PlayerData.gold + " gold)");
 		Console.WriteLine("");
 
 		// If the player has enough gold, confirm whether they'd like to make the hire.
-		if (gold >= price)
+		if (PlayerData.gold >= price)
 		{
 			Console.WriteLine("Are you sure you want to make this purchase? (yes/no)");
 			userInput = Console.ReadLine().ToLower();
 
 			if (userInput == "yes" || userInput == "y")
 			{
-				Character newHero = Character.CreatePlayerCharacter();
-				heroes.Add(newHero);
+				PlayerCharacter newHero = CustomCharacterCreator.CreatePlayerCharacter();
+				PlayerData.party.Add(newHero);
 
 				Console.WriteLine("");
 				Console.WriteLine(newHero.name + " has joined your party!");
-				Console.WriteLine("");
-				Console.WriteLine("[Press ENTER to continue]");
-				Console.ReadLine();
+				Program.PressEnterToContinue();
 			}
 		}
 
@@ -193,13 +239,7 @@ static class ExampleGame
 		else
 		{
 			Console.WriteLine("Sorry, it looks like you can't afford this purchase yet. Come back later!");
-			Console.WriteLine("");
-			Console.WriteLine("[Press ENTER to continue]");
-			Console.ReadLine();
+			Program.PressEnterToContinue();
 		}
-	}
-
-	static void BuyAbility()
-	{
 	}
 }
