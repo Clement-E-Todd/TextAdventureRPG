@@ -155,7 +155,7 @@ static class ExampleGame
 		// If a valid hero was selected, show their stats
 		if (heroIndexValid && selectedHeroNumber > 0 && selectedHeroNumber <= PlayerData.party.Count)
 		{
-			Character selectedHero = PlayerData.party[selectedHeroNumber - 1];
+			PlayerCharacter selectedHero = PlayerData.party[selectedHeroNumber - 1];
 			selectedHero.DisplayStats();
 		}
 

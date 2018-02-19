@@ -269,6 +269,41 @@ class EnemyEncounter
 
 		Console.Clear();
 		Console.WriteLine(PlayerData.party[0].name + "'s party is victorious!");
+		Console.WriteLine("");
+
+		// Award gold to the player
+		int totalGoldWon = 0;
+		foreach (Enemy enemy in enemies)
+		{
+			totalGoldWon += enemy.goldReward;
+		}
+		PlayerData.gold += totalGoldWon;
+		Console.WriteLine("Got " + totalGoldWon + " gold!");
+		Console.WriteLine("");
+
+		// Award exp to surviving heroes
+		int totalExpGained = 0;
+		foreach (Enemy enemy in enemies)
+		{
+			totalExpGained += enemy.expReward;
+		}
+		foreach (PlayerCharacter hero in PlayerData.party)
+		{
+			hero.exp += totalExpGained;
+			Console.WriteLine(hero.name + " gained " + totalExpGained + " EXP!");
+		}
+
 		Program.PressEnterToContinue();
+
+		// Level up heroes who have gained enough experience
+		foreach (PlayerCharacter hero in PlayerData.party)
+		{
+			// Since it's possible to level up more than once in a single battle,
+			// the experience check is done as a loop.
+			while (hero.exp >= hero.GetExpForNextLevel())
+			{
+				hero.LevelUp();
+			}
+		}
 	}
 }

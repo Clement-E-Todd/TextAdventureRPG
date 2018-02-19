@@ -87,11 +87,14 @@ class Ability
 
 		// Defeated characters can't be targeted, so filter them out of the target party
 		List<Character> validTargets = new List<Character>();
-		foreach (Character character in targetParty)
+		if (targetParty != null)
 		{
-			if (character.currentStats.Get(Stats.Type.HP) > 0)
+			foreach (Character character in targetParty)
 			{
-				validTargets.Add(character);
+				if (character.currentStats.Get(Stats.Type.HP) > 0)
+				{
+					validTargets.Add(character);
+				}
 			}
 		}
 

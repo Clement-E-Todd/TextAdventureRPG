@@ -25,19 +25,6 @@ abstract class Character
 		turnPriority = 0;
 	}
 
-	public void DisplayStats()
-	{
-		Console.Clear();
-		Console.WriteLine(name.ToUpper() + "'S STATS");
-		Console.WriteLine("");
-		Console.WriteLine("HP: " + currentStats.Get(Stats.Type.HP) + " / " + baseStats.Get(Stats.Type.HP));
-		Console.WriteLine("SP: " + currentStats.Get(Stats.Type.SP) + " / " + baseStats.Get(Stats.Type.SP));
-		Console.WriteLine("Strength: " + currentStats.Get(Stats.Type.Strength));
-		Console.WriteLine("Magic: " + currentStats.Get(Stats.Type.Magic));
-		Console.WriteLine("Speed: " + currentStats.Get(Stats.Type.Speed));
-		Program.PressEnterToContinue();
-	}
-
 	public int GetPhysicalDefense()
 	{
 		return currentStats.Get(Stats.Type.Strength) / 2;

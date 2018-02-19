@@ -2,16 +2,22 @@
 
 class Enemy : Character
 {
-	public Enemy(string name, Pronouns pronouns, Stats baseStats, Ability[] abilities) : base(name, pronouns)
+	public int expReward;
+	public int goldReward;
+
+	public Enemy(string name, Pronouns pronouns, Stats baseStats, Ability[] abilities, int expReward, int goldReward) : base(name, pronouns)
 	{
 		this.baseStats = baseStats;
 		this.abilities = abilities.ToList();
 		ResetStats();
+
+		this.expReward = expReward;
+		this.goldReward = goldReward;
 	}
 
 	public Enemy CreateCopy()
 	{
-		Enemy enemyCopy = new Enemy(name, pronouns, baseStats, abilities.ToArray());
+		Enemy enemyCopy = new Enemy(name, pronouns, baseStats, abilities.ToArray(), expReward, goldReward);
 		return enemyCopy;
 	}
 }
