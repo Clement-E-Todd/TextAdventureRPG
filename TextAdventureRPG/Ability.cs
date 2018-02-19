@@ -110,7 +110,7 @@ class Ability
 				{
 					Console.WriteLine("[" + (i + 1) + "] " + targetParty[i].name);
 				}
-				
+
 				while (targetsAffected[0] == null)
 				{
 					string userInput = Console.ReadLine().ToUpper();
@@ -134,6 +134,12 @@ class Ability
 			}
 		}
 
+		// If the ability can only target the character who uses it, create an array that only contains the performer
+		else if (targetType == TargetType.SelfOnly)
+		{
+			targetsAffected = new Character[] { performer };
+		}
+
 		// Write out the actions that are transpiring
 		if (targetsAffected.Length == 1)
 		{
@@ -148,7 +154,7 @@ class Ability
 		Thread.Sleep(1000);
 
 		// Apply the ability's effect to each of the targets
-		foreach (Character target in targetParty)
+		foreach (Character target in targetsAffected)
 		{
 			bool isOffensiveAbility = (targetType == TargetType.SingleOpponent || targetType == TargetType.AllOpponents);
 
@@ -190,7 +196,23 @@ class Ability
 					}
 				}
 
+				// Write out the effect that is about to be applied to the target
+				string verb = "";
+				if (isOffensiveAbility)
+				{
+					verb = "falls";
+				}
+				else
+				{
+					verb = "rises";
+				}
 
+				string endOfSentence = "!";
+				if (effect.duration == Effect.Duration.UntilNextTurn)
+				{
+					endOfSentence = " temporarily!";
+				}
+				Console.WriteLine(target.name + "'s " + effect.stat + " " + verb + " by " + amountToApply + endOfSentence);
 			}
 		}
 	}
@@ -199,32 +221,32 @@ class Ability
 	{
 		string formattedText = battleDescription;
 
-		formattedText = formattedText.Replace("PERFORMER:NAME", performer.name);
-		formattedText = formattedText.Replace("PERFORMER:THEY", performer.pronouns.they);
-		formattedText = formattedText.Replace("PERFORMER:THEM", performer.pronouns.them);
-		formattedText = formattedText.Replace("PERFORMER:THEIR", performer.pronouns.their);
-		formattedText = formattedText.Replace("PERFORMER:THEIRS", performer.pronouns.theirs);
-		formattedText = formattedText.Replace("PERFORMER:THEMSELF", performer.pronouns.themself);
+		formattedText = formattedText.Replace("<PERFORMER:NAME>", performer.name);
+		formattedText = formattedText.Replace("<PERFORMER:THEY>", performer.pronouns.they);
+		formattedText = formattedText.Replace("<PERFORMER:THEM>", performer.pronouns.them);
+		formattedText = formattedText.Replace("<PERFORMER:THEIR>", performer.pronouns.their);
+		formattedText = formattedText.Replace("<PERFORMER:THEIRS>", performer.pronouns.theirs);
+		formattedText = formattedText.Replace("<PERFORMER:THEMSELF>", performer.pronouns.themself);
 
 		if (target != null)
 		{
 			if (target != performer)
 			{
-				formattedText = formattedText.Replace("TARGET:NAME", target.name);
-				formattedText = formattedText.Replace("TARGET:THEY", target.pronouns.they);
-				formattedText = formattedText.Replace("TARGET:THEM", target.pronouns.them);
-				formattedText = formattedText.Replace("TARGET:THEIR", target.pronouns.their);
-				formattedText = formattedText.Replace("TARGET:THEIRS", target.pronouns.theirs);
-				formattedText = formattedText.Replace("TARGET:THEMSELF", target.pronouns.themself);
+				formattedText = formattedText.Replace("<TARGET:NAME>", target.name);
+				formattedText = formattedText.Replace("<TARGET:THEY>", target.pronouns.they);
+				formattedText = formattedText.Replace("<TARGET:THEM>", target.pronouns.them);
+				formattedText = formattedText.Replace("<TARGET:THEIR>", target.pronouns.their);
+				formattedText = formattedText.Replace("<TARGET:THEIRS>", target.pronouns.theirs);
+				formattedText = formattedText.Replace("<TARGET:THEMSELF>", target.pronouns.themself);
 			}
 			else
 			{
-				formattedText = formattedText.Replace("TARGET:NAME", performer.pronouns.themself);
-				formattedText = formattedText.Replace("TARGET:THEY", performer.pronouns.they);
-				formattedText = formattedText.Replace("TARGET:THEM", performer.pronouns.themself);
-				formattedText = formattedText.Replace("TARGET:THEIR", performer.pronouns.their);
-				formattedText = formattedText.Replace("TARGET:THEIRS", performer.pronouns.theirs);
-				formattedText = formattedText.Replace("TARGET:THEMSELF", performer.pronouns.themself);
+				formattedText = formattedText.Replace("<TARGET:NAME>", performer.pronouns.themself);
+				formattedText = formattedText.Replace("<TARGET:THEY>", performer.pronouns.they);
+				formattedText = formattedText.Replace("<TARGET:THEM>", performer.pronouns.themself);
+				formattedText = formattedText.Replace("<TARGET:THEIR>", performer.pronouns.their);
+				formattedText = formattedText.Replace("<TARGET:THEIRS>", performer.pronouns.theirs);
+				formattedText = formattedText.Replace("<TARGET:THEMSELF>", performer.pronouns.themself);
 			}
 		}
 

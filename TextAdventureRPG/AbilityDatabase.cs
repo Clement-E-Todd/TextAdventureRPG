@@ -6,7 +6,7 @@
 	public static Ability attack = new Ability(
 		"Attack",
 		"Perform a basic physical attack against a single opponent.",
-		"PERFORMER:NAME attacks TARGET:NAME!",
+		"<PERFORMER:NAME> attacks <TARGET:NAME>!",
 		null,
 		new Ability.Effect[]
 		{
@@ -24,7 +24,7 @@
 	public static Ability defend = new Ability(
 		"Defend",
 		"Assume a defensive stance that reduces physical and magical damage.",
-		"PERFORMER:NAME defends TARGET:THEMSELF!",
+		"<PERFORMER:NAME> defends <TARGET:THEMSELF>!",
 		null,
 		new Ability.Effect[]
 		{
@@ -50,7 +50,7 @@
 		public static Ability acid = new Ability(
 			"Acid Spray",
 			"Summon a spray of acid to burn all opponents.",
-			"PERFORMER:NAME sprays a blast of acid!",
+			"<PERFORMER:NAME> sprays a blast of acid!",
 			new Ability.CostToUse[]
 			{
 				new Ability.CostToUse(Ability.CostToUse.Type.SP, 20)
@@ -69,7 +69,7 @@
 		public static Ability bite = new Ability(
 			"Bite",
 			"Sink your teeth into a single opponent.",
-			"PERFORMER:NAME bites TARGET:NAME!",
+			"<PERFORMER:NAME> bites <TARGET:NAME>!",
 			null,
 			new Ability.Effect[]
 			{
@@ -85,7 +85,7 @@
 		public static Ability creepyCrawl = new Ability(
 			"Creepy Crawl",
 			"Crawl unsettlingly up an opponent's legs to distract them.",
-			"PERFORMER:NAME scuttles up TARGET:NAME's leg!",
+			"<PERFORMER:NAME> scuttles up <TARGET:NAME>'s leg!",
 			null,
 			new Ability.Effect[]
 			{
@@ -111,7 +111,7 @@
 		public static Ability jiggle = new Ability(
 			"Jiggle",
 			"Jiggle rapidly, absorbing mana from the environment.",
-			"PERFORMER:NAME jiggles threateningly!",
+			"<PERFORMER:NAME> jiggles threateningly!",
 			null,
 			new Ability.Effect[]
 			{

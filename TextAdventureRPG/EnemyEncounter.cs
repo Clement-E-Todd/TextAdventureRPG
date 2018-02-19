@@ -132,7 +132,20 @@ class EnemyEncounter
 	void EnemyTurn(Enemy enemy)
 	{
 		Console.Clear();
-		Console.WriteLine(enemy.name + " takes " + enemy.pronouns.their + " turn.");
+
+		Ability abilityToUse = enemy.abilities[Program.random.Next(enemy.abilities.Count)];
+
+		Character[] targetParty = null;
+		if (abilityToUse.targetType == Ability.TargetType.SingleAlly || abilityToUse.targetType == Ability.TargetType.AllAllies)
+		{
+			targetParty = enemies;
+		}
+		else if (abilityToUse.targetType == Ability.TargetType.SingleOpponent || abilityToUse.targetType == Ability.TargetType.AllOpponents)
+		{
+			targetParty = PlayerData.party.ToArray();
+		}
+
+		abilityToUse.Perform(enemy, targetParty);
 		Program.PressEnterToContinue();
 	}
 }
