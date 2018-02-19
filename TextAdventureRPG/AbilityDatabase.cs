@@ -11,9 +11,8 @@
 		new Ability.Effect[]
 		{
 			new Ability.Effect(
-				Ability.Effect.TargetedStat.HP,
+				Stats.Type.HP,
 				Ability.Effect.SkillType.Physical,
-				Ability.Effect.Duration.Immediate,
 				1.0f)
 		},
 		Ability.TargetType.SingleOpponent);
@@ -21,7 +20,7 @@
 	/**
 	 * BASIC DEFENSIVE TECHNIQUE
 	 */
-	public static Ability defend = new Ability(
+	public static TemporaryAbility defend = new TemporaryAbility(
 		"Defend",
 		"Assume a defensive stance that reduces physical and magical damage.",
 		"<PERFORMER:NAME> defends <TARGET:THEMSELF>!",
@@ -29,17 +28,16 @@
 		new Ability.Effect[]
 		{
 			new Ability.Effect(
-				Ability.Effect.TargetedStat.Strength,
+				Stats.Type.Strength,
 				Ability.Effect.SkillType.Physical,
-				Ability.Effect.Duration.UntilNextTurn,
 				0.5f),
 			new Ability.Effect(
-				Ability.Effect.TargetedStat.Magic,
+				Stats.Type.Magic,
 				Ability.Effect.SkillType.Magical,
-				Ability.Effect.Duration.UntilNextTurn,
 				0.5f)
 		},
-		Ability.TargetType.SelfOnly);
+		Ability.TargetType.SelfOnly,
+		1);
 
 	/**
 	 * ABILITIES FROM THE EXAMPLE GAME
@@ -58,9 +56,8 @@
 			new Ability.Effect[]
 			{
 				new Ability.Effect(
-					Ability.Effect.TargetedStat.HP,
+					Stats.Type.HP,
 					Ability.Effect.SkillType.Magical,
-					Ability.Effect.Duration.Immediate,
 					1.2f)
 			},
 			Ability.TargetType.AllOpponents);
@@ -74,15 +71,14 @@
 			new Ability.Effect[]
 			{
 				new Ability.Effect(
-					Ability.Effect.TargetedStat.HP,
+					Stats.Type.HP,
 					Ability.Effect.SkillType.Physical,
-					Ability.Effect.Duration.Immediate,
 					1.0f)
 			},
 			Ability.TargetType.SingleOpponent);
 
 		// CREEPY CRAWL
-		public static Ability creepyCrawl = new Ability(
+		public static TemporaryAbility creepyCrawl = new TemporaryAbility(
 			"Creepy Crawl",
 			"Crawl unsettlingly up an opponent's legs to distract them.",
 			"<PERFORMER:NAME> scuttles up <TARGET:NAME>'s leg!",
@@ -90,22 +86,20 @@
 			new Ability.Effect[]
 			{
 				new Ability.Effect(
-					Ability.Effect.TargetedStat.Strength,
+					Stats.Type.Strength,
 					Ability.Effect.SkillType.Physical,
-					Ability.Effect.Duration.UntilNextTurn,
 					0.9f),
 				new Ability.Effect(
-					Ability.Effect.TargetedStat.Magic,
+					Stats.Type.Magic,
 					Ability.Effect.SkillType.Physical,
-					Ability.Effect.Duration.UntilNextTurn,
 					0.9f),
 				new Ability.Effect(
-					Ability.Effect.TargetedStat.Speed,
+					Stats.Type.Speed,
 					Ability.Effect.SkillType.Physical,
-					Ability.Effect.Duration.UntilNextTurn,
 					0.9f)
 			},
-			Ability.TargetType.SingleOpponent);
+			Ability.TargetType.SingleOpponent,
+			2);
 
 		// JIGGLE
 		public static Ability jiggle = new Ability(
@@ -116,9 +110,8 @@
 			new Ability.Effect[]
 			{
 				new Ability.Effect(
-					Ability.Effect.TargetedStat.SP,
+					Stats.Type.SP,
 					Ability.Effect.SkillType.Physical,
-					Ability.Effect.Duration.Immediate,
 					0.5f)
 			},
 			Ability.TargetType.SelfOnly);

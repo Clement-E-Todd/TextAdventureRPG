@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 class Ability
@@ -11,6 +12,8 @@ class Ability
 	public Effect[] effects;
 	public TargetType targetType;
 
+	// The "CostToUse" struct describes which resource the character will have to
+	// spend to use the ability (HP or SP) and how much.
 	public struct CostToUse
 	{
 		public enum Type
@@ -29,43 +32,35 @@ class Ability
 		}
 	}
 
+	// The "Effect" struct describes what kind of effect the ability will have on its target
 	public struct Effect
 	{
-		public enum TargetedStat
-		{
-			HP,
-			SP,
-			Strength,
-			Magic,
-			Speed
-		}
-
+		// Describes whether the ability is physical or magical in nature
 		public enum SkillType
 		{
 			Physical,
 			Magical
 		}
+		
+		// Which stat is changed by the effect
+		public Stats.Type stat;
 
-		public enum Duration
-		{
-			Immediate,
-			UntilNextTurn
-		}
-
-		public TargetedStat stat;
+		// Physical or Magical?
 		public SkillType skillType;
-		public Duration duration;
+
+		// Increases the effectiveness of the effect based on the user's strength or magic (depending on whether
+		// the ability is physical or magical).
 		public float multiplier;
 
-		public Effect(TargetedStat stat, SkillType skillType, Duration duration, float multiplier)
+		public Effect(Stats.Type stat, SkillType skillType, float multiplier)
 		{
 			this.stat = stat;
 			this.skillType = skillType;
-			this.duration = duration;
 			this.multiplier = multiplier;
 		}
 	}
 
+	// Who the target of the ability is
 	public enum TargetType
 	{
 		SingleOpponent,
@@ -88,39 +83,47 @@ class Ability
 
 	public void Perform(Character performer, Character[] targetParty)
 	{
-		Character[] targetsAffected = null;
+		List<Character> targetsAffected = new List<Character>();
+
+		// Defeated characters can't be targeted, so filter them out of the target party
+		List<Character> validTargets = new List<Character>();
+		foreach (Character character in targetParty)
+		{
+			if (character.currentStats.Get(Stats.Type.HP) > 0)
+			{
+				validTargets.Add(character);
+			}
+		}
 
 		// If this ability targets the entire party, simply set targetsAffected to targetParty
 		if (targetType == TargetType.AllAllies || targetType == TargetType.AllOpponents)
 		{
-			targetsAffected = targetParty;
+			targetsAffected = validTargets;
 		}
 
 		// If this ability targets one character (and is not self-only), select the target from the target party
 		else if (targetType == TargetType.SingleAlly || targetType == TargetType.SingleOpponent)
 		{
-			targetsAffected = new Character[1];
-
 			// If the performer is a player character, allow the player to choose the target.
 			// Otherwise, pick randomly.
 			if (performer is PlayerCharacter)
 			{
 				Console.WriteLine("Who will " + performer.pronouns.they + " target?");
-				for (int i = 0; i < targetParty.Length; i++)
+				for (int i = 0; i < validTargets.Count; i++)
 				{
-					Console.WriteLine("[" + (i + 1) + "] " + targetParty[i].name);
+					Console.WriteLine("[" + (i + 1) + "] " + validTargets[i].name);
 				}
 
-				while (targetsAffected[0] == null)
+				while (targetsAffected.Count == 0)
 				{
 					string userInput = Console.ReadLine().ToUpper();
 
 					int numericInput;
 					bool isInputNumeric = int.TryParse(userInput, out numericInput);
 
-					if (isInputNumeric && numericInput >= 1 && numericInput <= targetParty.Length)
+					if (isInputNumeric && numericInput >= 1 && numericInput <= validTargets.Count)
 					{
-						targetsAffected[0] = targetParty[numericInput - 1];
+						targetsAffected.Add(validTargets[numericInput - 1]);
 					}
 					else
 					{
@@ -130,18 +133,18 @@ class Ability
 			}
 			else
 			{
-				targetsAffected[0] = targetParty[Program.random.Next(targetParty.Length)];
+				targetsAffected.Add(validTargets[Program.random.Next(validTargets.Count)]);
 			}
 		}
 
-		// If the ability can only target the character who uses it, create an array that only contains the performer
+		// If the ability can only target the character who uses it, simply add the performer to the affected targets
 		else if (targetType == TargetType.SelfOnly)
 		{
-			targetsAffected = new Character[] { performer };
+			targetsAffected.Add(performer);
 		}
 
 		// Write out the actions that are transpiring
-		if (targetsAffected.Length == 1)
+		if (targetsAffected.Count == 1)
 		{
 			WriteBattleDescription(performer, targetsAffected[0]);
 		}
@@ -156,63 +159,86 @@ class Ability
 		// Apply the ability's effect to each of the targets
 		foreach (Character target in targetsAffected)
 		{
-			bool isOffensiveAbility = (targetType == TargetType.SingleOpponent || targetType == TargetType.AllOpponents);
-
 			// Loop over each of this ability's effects and apply it to the target
 			foreach (Effect effect in effects)
 			{
-				// Get the amount that this ability should affect the target, based on the performer's strength if the
-				// effect is physical or based on the performer's magic if the effect is magical.
-				int amountToApply = 0;
+				// Check whether this ability is offensive or supportive so that we know whether to add or subtract
+				// from the target's stats
+				bool isOffensiveAbility = (targetType == TargetType.SingleOpponent || targetType == TargetType.AllOpponents);
 
-				if (effect.skillType == Effect.SkillType.Physical)
-				{
-					amountToApply = (int)(performer.currentStats.strength * effect.multiplier);
-				}
-				else if (effect.skillType == Effect.SkillType.Magical)
-				{
-					amountToApply = (int)(performer.currentStats.magic * effect.multiplier);
-				}
+				// Calculate how effective the ability is against the target by comparing the performer and target's stats
+				int potency = CalculateEffectPotency(effect, target, performer, isOffensiveAbility);
 
-				// If this is an offensive ability, reduce how much the target is affected based on their defense.
-				if (isOffensiveAbility)
-				{
-					int defenseAmount = 0;
+				// Write out a description of the effect
+				WriteStatChangeDescription(target.name, effect.stat, potency, isOffensiveAbility);
 
-					if (effect.skillType == Effect.SkillType.Physical)
-					{
-						defenseAmount = target.GetPhysicalDefense();
-					}
-					else if (effect.skillType == Effect.SkillType.Magical)
-					{
-						defenseAmount = target.GetMagicalDefense();
-					}
+				// Apply the effect with the calculated potency to the target
+				ApplyEffectToTarget(effect, target, potency, isOffensiveAbility);
 
-					amountToApply -= defenseAmount;
+				// Pause briefly between displaying each effect
+				Thread.Sleep(500);
+			}
+		}
+	}
 
-					if (amountToApply < 0)
-					{
-						amountToApply = 0;
-					}
-				}
+	private int CalculateEffectPotency(Effect effect, Character target, Character performer, bool isOffensiveAbility)
+	{
+		// Get the amount that this ability should affect the target, based on the performer's strength if the
+		// effect is physical or based on the performer's magic if the effect is magical.
+		int potency = 0;
 
-				// Write out the effect that is about to be applied to the target
-				string verb = "";
-				if (isOffensiveAbility)
-				{
-					verb = "falls";
-				}
-				else
-				{
-					verb = "rises";
-				}
+		if (effect.skillType == Effect.SkillType.Physical)
+		{
+			potency = (int)(performer.currentStats.Get(Stats.Type.Strength) * effect.multiplier);
+		}
+		else if (effect.skillType == Effect.SkillType.Magical)
+		{
+			potency = (int)(performer.currentStats.Get(Stats.Type.Magic) * effect.multiplier);
+		}
 
-				string endOfSentence = "!";
-				if (effect.duration == Effect.Duration.UntilNextTurn)
-				{
-					endOfSentence = " temporarily!";
-				}
-				Console.WriteLine(target.name + "'s " + effect.stat + " " + verb + " by " + amountToApply + endOfSentence);
+		// If this is an offensive ability, reduce how much the target is affected based on their defense.
+		if (isOffensiveAbility)
+		{
+			int defenseAmount = 0;
+
+			if (effect.skillType == Effect.SkillType.Physical)
+			{
+				defenseAmount = target.GetPhysicalDefense();
+			}
+			else if (effect.skillType == Effect.SkillType.Magical)
+			{
+				defenseAmount = target.GetMagicalDefense();
+			}
+
+			potency -= defenseAmount;
+
+			if (potency < 0)
+			{
+				potency = 0;
+			}
+		}
+
+		return potency;
+	}
+
+	protected virtual void ApplyEffectToTarget(Effect effect, Character target, int potency, bool isOffensiveAbility)
+	{
+		if (isOffensiveAbility)
+		{
+			target.currentStats.Subtract(effect.stat, potency);
+		}
+		else
+		{
+			target.currentStats.Add(effect.stat, potency);
+
+			// Don't allow the character's HP and SP to exceed their maximum values
+			if (effect.stat == Stats.Type.HP && target.currentStats.Get(Stats.Type.HP) > target.baseStats.Get(Stats.Type.HP))
+			{
+				target.currentStats.Set(Stats.Type.HP, target.baseStats.Get(Stats.Type.HP));
+			}
+			else if (effect.stat == Stats.Type.SP && target.currentStats.Get(Stats.Type.SP) > target.baseStats.Get(Stats.Type.SP))
+			{
+				target.currentStats.Set(Stats.Type.SP, target.baseStats.Get(Stats.Type.SP));
 			}
 		}
 	}
@@ -251,5 +277,21 @@ class Ability
 		}
 
 		Console.WriteLine(formattedText);
+	}
+
+	protected virtual void WriteStatChangeDescription(string targetName, Stats.Type stat, int amountToApply, bool isOffensiveAbility)
+	{
+		string verb = "";
+
+		if (isOffensiveAbility)
+		{
+			verb = "falls";
+		}
+		else
+		{
+			verb = "rises";
+		}
+
+		Console.WriteLine(targetName + "'s " + stat + " " + verb + " by " + amountToApply + "!");
 	}
 }

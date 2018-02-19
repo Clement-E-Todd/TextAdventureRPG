@@ -30,12 +30,7 @@ class PlayerCharacter : Character
 
 		int statMultiplier = level + (levelOneStatMultiplier - 1);
 
-		baseStats = new Stats(
-			statIncreasePerLevel.hp * statMultiplier,
-			statIncreasePerLevel.sp * statMultiplier,
-			statIncreasePerLevel.strength * statMultiplier,
-			statIncreasePerLevel.magic * statMultiplier,
-			statIncreasePerLevel.speed * statMultiplier);
+		baseStats = statIncreasePerLevel.CreateCopy(statMultiplier);
 
 		ResetStats();
 	}
@@ -47,11 +42,11 @@ class PlayerCharacter : Character
 		Console.Clear();
 		Console.WriteLine(name.ToUpper() + " HAS REACHED LEVEL " + level.ToString() + "!");
 		Console.WriteLine("");
-		Console.WriteLine("Max HP increased by " + statIncreasePerLevel.hp + "!");
-		Console.WriteLine("Max SP increased by " + statIncreasePerLevel.sp + "!");
-		Console.WriteLine("Strength increased by " + statIncreasePerLevel.strength + "!");
-		Console.WriteLine("Magic increased by " + statIncreasePerLevel.magic + "!");
-		Console.WriteLine("Speed increased by " + statIncreasePerLevel.speed + "!");
+		Console.WriteLine("Max HP increased by " + statIncreasePerLevel.Get(Stats.Type.HP) + "!");
+		Console.WriteLine("Max SP increased by " + statIncreasePerLevel.Get(Stats.Type.SP) + "!");
+		Console.WriteLine("Strength increased by " + statIncreasePerLevel.Get(Stats.Type.Strength) + "!");
+		Console.WriteLine("Magic increased by " + statIncreasePerLevel.Get(Stats.Type.Magic) + "!");
+		Console.WriteLine("Speed increased by " + statIncreasePerLevel.Get(Stats.Type.Speed) + "!");
 		Program.PressEnterToContinue();
 	}
 }

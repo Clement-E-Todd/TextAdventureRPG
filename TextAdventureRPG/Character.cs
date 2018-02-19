@@ -13,25 +13,6 @@ abstract class Character
 
 	public List<Ability> abilities = new List<Ability>();
 
-	public class Stats
-	{
-		public Stats(int hp, int sp, int strength, int magic, int speed)
-		{
-			this.hp = hp;
-			this.sp = sp;
-			this.strength = strength;
-			this.magic = magic;
-			this.speed = speed;
-		}
-
-		public int hp;
-		public int sp;
-
-		public int strength;
-		public int magic;
-		public int speed;
-	}
-
 	public Character(string name, Pronouns pronouns)
 	{
 		this.name = name;
@@ -40,7 +21,7 @@ abstract class Character
 
 	public void ResetStats()
 	{
-		currentStats = new Stats(baseStats.hp, baseStats.sp, baseStats.strength, baseStats.magic, baseStats.speed);
+		currentStats = baseStats.CreateCopy();
 		turnPriority = 0;
 	}
 
@@ -49,21 +30,21 @@ abstract class Character
 		Console.Clear();
 		Console.WriteLine(name.ToUpper() + "'S STATS");
 		Console.WriteLine("");
-		Console.WriteLine("HP: " + currentStats.hp + " / " + baseStats.hp);
-		Console.WriteLine("SP: " + currentStats.sp + " / " + baseStats.sp);
-		Console.WriteLine("Strength: " + currentStats.strength);
-		Console.WriteLine("Magic: " + currentStats.magic);
-		Console.WriteLine("Speed: " + currentStats.speed);
+		Console.WriteLine("HP: " + currentStats.Get(Stats.Type.HP) + " / " + baseStats.Get(Stats.Type.HP));
+		Console.WriteLine("SP: " + currentStats.Get(Stats.Type.SP) + " / " + baseStats.Get(Stats.Type.SP));
+		Console.WriteLine("Strength: " + currentStats.Get(Stats.Type.Strength));
+		Console.WriteLine("Magic: " + currentStats.Get(Stats.Type.Magic));
+		Console.WriteLine("Speed: " + currentStats.Get(Stats.Type.Speed));
 		Program.PressEnterToContinue();
 	}
 
 	public int GetPhysicalDefense()
 	{
-		return currentStats.strength / 2;
+		return currentStats.Get(Stats.Type.Strength) / 2;
 	}
 
 	public int GetMagicalDefense()
 	{
-		return currentStats.magic / 2;
+		return currentStats.Get(Stats.Type.Magic) / 2;
 	}
 }

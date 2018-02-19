@@ -11,7 +11,7 @@ static class CustomCharacterCreator
 		Pronouns pronouns = PromptForPronouns();
 
 		// Prompt for the character's strongest and weakest traits, which will determine their stats
-		Character.Stats statIncreasePerLevel = PromptForStats();
+		Stats statIncreasePerLevel = PromptForStats();
 
 		// Create and return the new character using the information specified by the user
 		PlayerCharacter character = new PlayerCharacter(name, pronouns, statIncreasePerLevel);
@@ -101,7 +101,7 @@ static class CustomCharacterCreator
 		return gender;
 	}
 
-	private static Character.Stats PromptForStats()
+	private static Stats PromptForStats()
 	{
 		// Prompt the user to specify the character's strongest trait
 		Console.Clear();
@@ -166,44 +166,44 @@ static class CustomCharacterCreator
 
 		// Determine how much each of the character's traits will increase per level based on
 		// the strongest and weakest traits specified by the user
-		Character.Stats statIncreasePerLevel = new Character.Stats(10, 10, 3, 3, 3);
+		Stats statIncreasePerLevel = new Stats(10, 10, 3, 3, 3);
 
 		// Boost whichever traits were chosen to be the strongest...
 		if (strongestTrait == "S")
 		{
 			// Boost physical traits...
-			statIncreasePerLevel.hp += 3;
-			statIncreasePerLevel.strength += 2;
+			statIncreasePerLevel.Add(Stats.Type.HP, 3);
+			statIncreasePerLevel.Add(Stats.Type.Strength, 2);
 		}
 		else if (strongestTrait == "M")
 		{
 			// Boost magical traits...
-			statIncreasePerLevel.sp += 3;
-			statIncreasePerLevel.magic += 2;
+			statIncreasePerLevel.Add(Stats.Type.SP, 3);
+			statIncreasePerLevel.Add(Stats.Type.Magic, 2);
 		}
 		else if (strongestTrait == "A")
 		{
 			// Boost speed trait...
-			statIncreasePerLevel.speed += 2;
+			statIncreasePerLevel.Add(Stats.Type.Speed, 2);
 		}
 
 		// Reduce whichever traits were chosen to be the weakest...
 		if (weakestTrait == "S")
 		{
 			// Reduce physical traits...
-			statIncreasePerLevel.hp -= 2;
-			statIncreasePerLevel.strength -= 1;
+			statIncreasePerLevel.Subtract(Stats.Type.HP, 2);
+			statIncreasePerLevel.Subtract(Stats.Type.Strength, 1);
 		}
 		else if (weakestTrait == "M")
 		{
 			// Reduce magical traits...
-			statIncreasePerLevel.sp -= 2;
-			statIncreasePerLevel.magic -= 1;
+			statIncreasePerLevel.Subtract(Stats.Type.SP, 2);
+			statIncreasePerLevel.Subtract(Stats.Type.Magic, 1);
 		}
 		else if (weakestTrait == "A")
 		{
 			// Reduce speed trait...
-			statIncreasePerLevel.speed -= 1;
+			statIncreasePerLevel.Subtract(Stats.Type.Speed, 1);
 		}
 
 		return statIncreasePerLevel;
