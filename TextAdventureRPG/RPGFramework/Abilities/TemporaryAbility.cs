@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/**
+ * TEMPORARY ABILITY
+ * A temporary ability is an ability whose effects only last for a set number of turns. A common example of this
+ * would be the "defend" ability, which raises the user's stats to protect them from damage but expires at the
+ * beginning of the user's next turn.
+ */
 class TemporaryAbility : Ability
 {
 	int duration;
 	List<EffectRecord> recentEffects = new List<EffectRecord>();
 
-	// A record of a previously applied effect. This is used to undo the effect for abilities
-	// that end on the user's next turn.
+	/**
+	 * EFFECT RECORD
+	 * A record of a previously applied effect. This is used to undo the effects of an ability after it expires.
+	 */
 	class EffectRecord
 	{
 		public Effect effect;
@@ -29,12 +37,15 @@ class TemporaryAbility : Ability
 		}
 	}
 
+	// TemporaryAbility constructor - The same as the Ability base class's constructor, but also includes the number of turns
+	// until the ability's effect expire.
 	public TemporaryAbility(string name, string menuDescription, string battleDescription, CostToUse[] costsToUse, Effect[] effects, TargetType targetType, int duration)
 		: base(name, menuDescription, battleDescription, costsToUse, effects, targetType)
 	{
 		this.duration = duration;
 	}
 
+	// Called at the beginning of a character's turn, this function counts down the number of turns until the effect's expiry.
 	public void OnCharacterTurnStart(Character character)
 	{
 		// Loop backwards through the list of recent effects and remove them if they've expired. We have to loop backwards
@@ -54,6 +65,8 @@ class TemporaryAbility : Ability
 		}
 	}
 
+	// Extends the base Ability class's ApplyEffectToTarget function. A temporary ability records the applied effects so
+	// that it can undo them later when they expire.
 	protected override void ApplyEffectToTarget(Effect effect, Character target, Character performer, int potency, bool isOffensiveAbility)
 	{
 		base.ApplyEffectToTarget(effect, target, performer, potency, isOffensiveAbility);
@@ -62,6 +75,7 @@ class TemporaryAbility : Ability
 		recentEffects.Add(record);
 	}
 
+	// Revert an effect, reversing the original change in the target's stats.
 	private void UndoEffect(EffectRecord record)
 	{
 		if (record.isOffensiveAbility)
@@ -84,6 +98,7 @@ class TemporaryAbility : Ability
 		}
 	}
 
+	// Override the base Ability class's stat change description to indicate that the change is only temporary.
 	protected override void WriteStatChangeDescription(string targetName, Stats.Type stat, int amountToApply, bool isOffensiveAbility)
 	{
 		string verb = "";

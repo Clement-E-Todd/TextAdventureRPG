@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Threading;
 
+/**
+ * ABILITY
+ * An ability is any action that a character (hero or enemy) can perform in battle.
+ * Each character has their own personal list of abilities that they can perform.
+ */
 class Ability
 {
 	public string name;
@@ -16,6 +21,7 @@ class Ability
 	// spend to use the ability (HP or SP) and how much.
 	public struct CostToUse
 	{
+		// Does the ability consume SP or HP?
 		public enum Type
 		{
 			HP,
@@ -70,6 +76,7 @@ class Ability
 		SelfOnly
 	}
 
+	// Ability constructor - all of the ability's variables are initialized here.
 	public Ability(string name, string menuDescription, string battleDescription, CostToUse[] costsToUse, Effect[] effects, TargetType targetType)
 	{
 		this.name = name;
@@ -81,6 +88,7 @@ class Ability
 		this.targetType = targetType;
 	}
 
+	// This function is used to execute an ability by selecting a target and applying the ability's effects to it.
 	public void Perform(Character performer, Character[] targetParty)
 	{
 		List<Character> targetsAffected = new List<Character>();
@@ -184,10 +192,10 @@ class Ability
 		}
 	}
 
+	// Get the amount that this ability should affect the target, based on the performer's strength if the
+	// effect is physical or based on the performer's magic if the effect is magical.
 	private int CalculateEffectPotency(Effect effect, Character target, Character performer, bool isOffensiveAbility)
 	{
-		// Get the amount that this ability should affect the target, based on the performer's strength if the
-		// effect is physical or based on the performer's magic if the effect is magical.
 		int potency = 0;
 
 		if (effect.skillType == Effect.SkillType.Physical)
@@ -224,6 +232,7 @@ class Ability
 		return potency;
 	}
 
+	// Raise or lower a target's stats based on the calculations of CalculateEffectPotency (see above)
 	protected virtual void ApplyEffectToTarget(Effect effect, Character target, Character performer, int potency, bool isOffensiveAbility)
 	{
 		if (isOffensiveAbility)
@@ -246,6 +255,7 @@ class Ability
 		}
 	}
 
+	// Check a character's SP and HP to see whether or not they are able to use this move currently
 	public bool CanCharacterAffordCosts(Character character)
 	{
 		if (costsToUse == null)
@@ -268,6 +278,8 @@ class Ability
 		return canUseAbility;
 	}
 
+	// Insert the characters' names and pronouns into the description of the action that appears during battle,
+	// then write that description out to the console.
 	private void WriteBattleDescription(Character performer, Character target = null)
 	{
 		string formattedText = battleDescription;
@@ -304,6 +316,7 @@ class Ability
 		Console.WriteLine(formattedText);
 	}
 
+	// Describe the change in a target's stats in the console (ie, "Spider's HP falls by 10!")
 	protected virtual void WriteStatChangeDescription(string targetName, Stats.Type stat, int amountToApply, bool isOffensiveAbility)
 	{
 		string verb = "";
@@ -320,6 +333,7 @@ class Ability
 		Console.WriteLine(targetName + "'s " + stat + " " + verb + " by " + amountToApply + "!");
 	}
 
+	// Get a string that describes how much it costs to use this ability (ie "(Costs 10 SP and 5 HP)")
 	public string GetCostDescription()
 	{
 		if (costsToUse != null && costsToUse.Length > 0)

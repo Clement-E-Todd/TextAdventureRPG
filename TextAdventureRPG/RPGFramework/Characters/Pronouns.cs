@@ -1,5 +1,9 @@
 ﻿using System;
 
+/**
+ * PRONOUNS
+ * The pronouns used by a character (she / her, he / him, they / them etc...)
+ */
 class Pronouns
 {
 	public string they;
@@ -8,6 +12,7 @@ class Pronouns
 	public string theirs;
 	public string themself;
 
+	// Pronouns constructor - specifies a copmlete set of pronouns
 	public Pronouns(string they, string them, string their, string theirs, string themself)
 	{
 		this.they = they;
@@ -17,22 +22,7 @@ class Pronouns
 		this.themself = themself;
 	}
 
-	public static class Presets
-	{
-		public static Pronouns feminine = new Pronouns("she", "her", "her", "hers", "herself");
-		public static Pronouns masculine = new Pronouns("he", "him", "his", "his", "himself");
-		public static Pronouns they = new Pronouns("they", "them", "their", "theirs", "themself");
-		public static Pronouns ey = new Pronouns("ey", "em", "eir", "eirs", "eirself");
-		public static Pronouns e = new Pronouns("e", "em", "eir", "eirs", "eirself");
-		public static Pronouns per = new Pronouns("per", "per", "pers", "pers", "perself");
-		public static Pronouns sie = new Pronouns("sie", "sir", "hir", "hirs", "hirself");
-		public static Pronouns ve = new Pronouns("ve", "ver", "vis", "vers", "verself");
-		public static Pronouns zie = new Pronouns("zie", "zim", "zir", "zirs", "zirself");
-		public static Pronouns it = new Pronouns("it", "it", "its", "its", "itself");
-
-		public static Pronouns[] nonbinary = new Pronouns[] { they, ey, e, per, sie, ve, zie };
-	}
-
+	// Allow the player to define their own set of pronouns
 	public static Pronouns CreateCustom()
 	{
 		Console.WriteLine("Enter a subject pronoun (ie. 'they')");
@@ -56,5 +46,25 @@ class Pronouns
 		string themself = Console.ReadLine();
 
 		return new Pronouns(they, them, their, theirs, themself);
+	}
+
+	/**
+	 * PRESETS
+	 * A static class containing handy pre-existing pronoun sets
+	 */
+	public static class Presets
+	{
+		public static Pronouns feminine = new Pronouns("she", "her", "her", "hers", "herself");
+		public static Pronouns masculine = new Pronouns("he", "him", "his", "his", "himself");
+		public static Pronouns they = new Pronouns("they", "them", "their", "theirs", "themself");
+		public static Pronouns ey = new Pronouns("ey", "em", "eir", "eirs", "eirself");
+		public static Pronouns e = new Pronouns("e", "em", "eir", "eirs", "eirself");
+		public static Pronouns per = new Pronouns("per", "per", "pers", "pers", "perself");
+		public static Pronouns sie = new Pronouns("sie", "sir", "hir", "hirs", "hirself");
+		public static Pronouns ve = new Pronouns("ve", "ver", "vis", "vers", "verself");
+		public static Pronouns zie = new Pronouns("zie", "zim", "zir", "zirs", "zirself");
+		public static Pronouns it = new Pronouns("it", "it", "its", "its", "itself");
+
+		public static Pronouns[] nonbinary = new Pronouns[] { they, ey, e, per, sie, ve, zie };
 	}
 }

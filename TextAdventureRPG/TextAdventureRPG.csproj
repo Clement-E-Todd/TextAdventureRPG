@@ -43,22 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ability.cs" />
-    <Compile Include="AbilityDatabase.cs" />
-    <Compile Include="Character.cs" />
-    <Compile Include="CustomCharacterCreator.cs" />
-    <Compile Include="Enemy.cs" />
-    <Compile Include="EnemyDatabase.cs" />
-    <Compile Include="EnemyEncounter.cs" />
-    <Compile Include="ExampleGame.cs" />
-    <Compile Include="PlayerCharacter.cs" />
-    <Compile Include="Pronouns.cs" />
-    <Compile Include="PlayerData.cs" />
+    <Compile Include="RPGFramework\Abilities\Ability.cs" />
+    <Compile Include="ExampleGame\ExampleAbilities.cs" />
+    <Compile Include="RPGFramework\Characters\Character.cs" />
+    <Compile Include="RPGFramework\Characters\CustomCharacterCreator.cs" />
+    <Compile Include="RPGFramework\Characters\Enemy.cs" />
+    <Compile Include="ExampleGame\ExampleEnemies.cs" />
+    <Compile Include="RPGFramework\Encounters\EnemyEncounter.cs" />
+    <Compile Include="ExampleGame\ExampleGame.cs" />
+    <Compile Include="RPGFramework\Characters\PlayerCharacter.cs" />
+    <Compile Include="RPGFramework\Characters\Pronouns.cs" />
+    <Compile Include="RPGFramework\PlayerData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomEncounterGenerator.cs" />
-    <Compile Include="Stats.cs" />
-    <Compile Include="TemporaryAbility.cs" />
+    <Compile Include="RPGFramework\Encounters\RandomEncounterGenerator.cs" />
+    <Compile Include="RPGFramework\Characters\Stats.cs" />
+    <Compile Include="RPGFramework\Abilities\TemporaryAbility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

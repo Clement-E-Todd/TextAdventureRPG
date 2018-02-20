@@ -1,7 +1,12 @@
 ﻿using System;
 
+/**
+ * CUSTOM CHARACTER CREATOR
+ * A static class used to allow the player to create their own characters.
+ */
 static class CustomCharacterCreator
 {
+	// Trigger the character creation process.
 	public static PlayerCharacter CreatePlayerCharacter()
 	{
 		// Prompt the use to enter a name for the new character
@@ -17,7 +22,8 @@ static class CustomCharacterCreator
 		PlayerCharacter character = new PlayerCharacter(name, pronouns, statIncreasePerLevel);
 		return character;
 	}
-
+	
+	// Ask the player for the character's name
 	private static string PromptForName()
 	{
 		Console.Clear();
@@ -32,6 +38,7 @@ static class CustomCharacterCreator
 		return name;
 	}
 
+	// Ask the player for the character's gender pronouns
 	private static Pronouns PromptForPronouns()
 	{
 		Console.Clear();
@@ -66,8 +73,11 @@ static class CustomCharacterCreator
 		return pronouns;
 	}
 
+	// If the player indicated "other" for their gender, provide them a list of pre-existing non-binary pronouns
+	// or allow them to specify their own.
 	private static Pronouns PromptForNonbinaryPronouns()
 	{
+		// Write out all of the non-binary pronoun presets for the player to choose from
 		Console.Clear();
 		Console.WriteLine("What are your character's pronouns?");
 		for (int i = 0; i < Pronouns.Presets.nonbinary.Length; i++)
@@ -75,32 +85,40 @@ static class CustomCharacterCreator
 			Console.WriteLine("[" + (i + 1) + "] " + Pronouns.Presets.nonbinary[i].they + " / " + Pronouns.Presets.nonbinary[i].them);
 		}
 		Console.WriteLine("[C] Custom");
-		Pronouns gender = null;
+		Pronouns pronouns = null;
 
-		while (gender == null)
+		// Get the player's selection
+		while (pronouns == null)
 		{
 			string userInput = Console.ReadLine().ToUpper();
 
 			int numericInput;
 			bool isInputNumeric = int.TryParse(userInput, out numericInput);
 
+			// Use a preset if the player entered a valid number
 			if (isInputNumeric && numericInput >= 1 && numericInput <= Pronouns.Presets.nonbinary.Length)
 			{
-				gender = Pronouns.Presets.nonbinary[numericInput - 1];
+				pronouns = Pronouns.Presets.nonbinary[numericInput - 1];
 			}
+
+			// Allow the player to write a custom pronoun set
 			else if (userInput == "C")
 			{
-				gender = Pronouns.CreateCustom();
+				pronouns = Pronouns.CreateCustom();
 			}
+
+			// Inform the player if their input can't be used
 			else
 			{
 				Console.WriteLine("Invalid input.");
 			}
 		}
 
-		return gender;
+		return pronouns;
 	}
 
+	// Ask the player what they'd like their strongest and weakest traits to be between strength,
+	// magic and speed. The character's stats are generated based on the player's choices.
 	private static Stats PromptForStats()
 	{
 		// Prompt the user to specify the character's strongest trait
@@ -172,26 +190,26 @@ static class CustomCharacterCreator
 		if (strongestTrait == "S")
 		{
 			// Boost physical traits...
-			statIncreasePerLevel.Add(Stats.Type.HP, 3);
-			statIncreasePerLevel.Add(Stats.Type.Strength, 2);
+			statIncreasePerLevel.Add(Stats.Type.HP, 1);
+			statIncreasePerLevel.Add(Stats.Type.Strength, 1);
 		}
 		else if (strongestTrait == "M")
 		{
 			// Boost magical traits...
-			statIncreasePerLevel.Add(Stats.Type.SP, 3);
-			statIncreasePerLevel.Add(Stats.Type.Magic, 2);
+			statIncreasePerLevel.Add(Stats.Type.SP, 2);
+			statIncreasePerLevel.Add(Stats.Type.Magic, 1);
 		}
 		else if (strongestTrait == "A")
 		{
 			// Boost speed trait...
-			statIncreasePerLevel.Add(Stats.Type.Speed, 2);
+			statIncreasePerLevel.Add(Stats.Type.Speed, 1);
 		}
 
 		// Reduce whichever traits were chosen to be the weakest...
 		if (weakestTrait == "S")
 		{
 			// Reduce physical traits...
-			statIncreasePerLevel.Subtract(Stats.Type.HP, 2);
+			statIncreasePerLevel.Subtract(Stats.Type.HP, 1);
 			statIncreasePerLevel.Subtract(Stats.Type.Strength, 1);
 		}
 		else if (weakestTrait == "M")

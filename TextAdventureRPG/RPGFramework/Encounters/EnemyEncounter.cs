@@ -1,18 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/**
+ * ENEMY ENCOUNTER
+ * Represents a battle. This class can be insantiated directly for scripted battles or generated
+ * by the static RandomEncounterGenerator class for randomized battles.
+ */
 class EnemyEncounter
 {
 	protected Enemy[] enemies;
 	bool canRun;
 	bool battleComplete = false;
 
+	// EnemyEncounter constructor - Simply specify which enemies should appear and whther or not
+	// the heroes are able to escape from the battle!
 	public EnemyEncounter(Enemy[] enemies, bool canRun)
 	{
 		this.enemies = enemies;
 		this.canRun = canRun;
 	}
 
+	// Run an enemy encounter from start to finish
 	public void Start()
 	{
 		Console.Clear();
@@ -26,6 +34,8 @@ class EnemyEncounter
 
 		Program.PressEnterToContinue();
 
+		// This loop represents characters taking their turn to act - each iteration through
+		// the loop is one character's turn.
 		while (battleComplete == false)
 		{
 			// Find out which character should act next based on their speed values
@@ -57,8 +67,15 @@ class EnemyEncounter
 			// Check whether wither team has been defeated
 			CheckForBattleCompletion();
 		}
+
+		// After the battle is complete, reset all of the heroes' stats
+		foreach (PlayerCharacter hero in PlayerData.party)
+		{
+			hero.ResetStats();
+		}
 	}
 
+	// Display the stats of all characters on both teams.
 	private void WriteCurrentStats()
 	{
 		// Write the hero party's stats...
@@ -112,6 +129,7 @@ class EnemyEncounter
 		Console.ForegroundColor = ConsoleColor.Gray;
 	}
 
+	// Find out which character should act next. The higher a character's speed stat, the more frequently they will act.
 	Character GetCharacterForNextTurn()
 	{
 		Character nextCharacter = null;
@@ -147,12 +165,14 @@ class EnemyEncounter
 		return nextCharacter;
 	}
 
+	// Allow a player character to act by presenting the player with a choice of which ability to use.
 	void PlayerTurn(PlayerCharacter hero)
 	{
 		Console.WriteLine(hero.name.ToUpper() + " IS READY!");
 		Console.WriteLine("");
 		Console.WriteLine("What will " + hero.pronouns.they + " do?");
 
+		// Display all of the current hero's abilities to the user for them to choose from.
 		for (int i = 0; i < hero.abilities.Count; i++)
 		{
 			string abilityMessage = "[" + (i + 1) + "] " + hero.abilities[i].name;
@@ -173,6 +193,8 @@ class EnemyEncounter
 		}
 		Console.WriteLine("[R] Run");
 
+		// Read the player's input and attempt to perform the selected ability. If the
+		// player preovides iunvalid input, we will query again until they provide valid input.
 		bool turnComplete = false;
 		while (turnComplete == false)
 		{
@@ -181,10 +203,12 @@ class EnemyEncounter
 			int numericInput;
 			bool isInputNumeric = int.TryParse(userInput, out numericInput);
 
+			// If the user typed a number and the number is in range, attempt to perform the selected ability
 			if (isInputNumeric && numericInput >= 1 && numericInput <= hero.abilities.Count)
 			{
 				Ability abilityToUse = hero.abilities[numericInput - 1];
 
+				// If the hero can afford the SP and HP costs of the ability, perform the ability now.
 				if (abilityToUse.CanCharacterAffordCosts(hero))
 				{
 					Character[] targetParty = null;
@@ -201,11 +225,16 @@ class EnemyEncounter
 
 					turnComplete = true;
 				}
+
+				// If the hero can't afford the SP or HP cost of the ability, notify the polayer.
 				else
 				{
 					Console.WriteLine(hero.name + " can't afford that ability right now.");
 				}
 			}
+
+			// Attempt to run if the player typed "R". Running is always successful unless this encounter
+			// disallows running altogether.
 			else if (userInput == "R")
 			{
 				if (canRun)
@@ -219,16 +248,23 @@ class EnemyEncounter
 				}
 				turnComplete = true;
 			}
+
+			// Notify the player if their input can't be used.
 			else
 			{
 				Console.WriteLine("Invalid input.");
 			}
 		}
+
+		// Pause at the end of the turn before continuing.
 		Program.PressEnterToContinue();
 	}
 
+	// Allow an enemy character to act by rendomly selecting an ability and a target
 	void EnemyTurn(Enemy enemy)
 	{
+		// Get a list of possible abilities for the enemy to perform - they cannot perform
+		// abilities that they cannot afford the SP or HP cost for.
 		List<Ability> possibleAbilities = new List<Ability>();
 		foreach (Ability ability in enemy.abilities)
 		{
@@ -238,6 +274,7 @@ class EnemyEncounter
 			}
 		}
 
+		// If there are any abilities that the enemy can perform currently, do so now by selecting one randomly.
 		if (possibleAbilities.Count > 0)
 		{
 			Ability abilityToUse = possibleAbilities[Program.random.Next(possibleAbilities.Count)];
@@ -253,14 +290,18 @@ class EnemyEncounter
 			}
 
 			abilityToUse.Perform(enemy, targetParty);
-			Program.PressEnterToContinue();
 		}
+
+		// Notify the user if the enemy is unable to act.
 		else
 		{
 			Console.WriteLine(enemy.name + " finds " + enemy.pronouns.themself + " unable to act.");
 		}
+
+		Program.PressEnterToContinue();
 	}
 
+	// Check whether either team has been defeated and, if so, end the battle accordingly.
 	void CheckForBattleCompletion()
 	{
 		// Check the enemy party for surviving monsters. If none are found, the battle is won!
@@ -301,6 +342,7 @@ class EnemyEncounter
 		}
 	}
 
+	// Handle the victory state by giving rewards to the player.
 	void OnAllEnemiesDefeated()
 	{
 		battleComplete = true;
