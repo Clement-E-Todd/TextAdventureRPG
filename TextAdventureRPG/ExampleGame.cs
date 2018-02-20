@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 static class ExampleGame
 {
@@ -12,8 +13,24 @@ static class ExampleGame
 			EnemyDatabase.Example.rat,
 			EnemyDatabase.Example.spider,
 			EnemyDatabase.Example.slime },
-		1, 3,
 		1, 3);
+
+	struct AbilityStoreItem
+	{
+		public Ability ability;
+		public int price;
+
+		public AbilityStoreItem(Ability ability, int price)
+		{
+			this.ability = ability;
+			this.price = price;
+		}
+	}
+	static AbilityStoreItem[] abilityStore = new AbilityStoreItem[]
+	{
+		new AbilityStoreItem(AbilityDatabase.Example.soothe, 50),
+		new AbilityStoreItem(AbilityDatabase.Example.heavyAttack, 75)
+	};
 
 	public static void Run()
 	{
@@ -78,10 +95,6 @@ static class ExampleGame
 		Console.WriteLine("");
 		Console.WriteLine("Which tier of monsters will you challenge?");
 		Console.WriteLine("[1] Beginner tier");
-		Console.WriteLine("[2] Bronze tier");
-		Console.WriteLine("[3] Silver tier");
-		Console.WriteLine("[4] Gold tier");
-		Console.WriteLine("[5] Challenge the Dark Lord");
 		Console.WriteLine("[X] Cancel");
 
 		string userInput = Console.ReadLine().ToLower();
@@ -90,26 +103,6 @@ static class ExampleGame
 		if (userInput == "1")
 		{
 			encounter = beginnerTier.CreateEncounter();
-		}
-		else if (userInput == "2")
-		{
-			Console.WriteLine("Not supported yet.");
-			Program.PressEnterToContinue();
-		}
-		else if (userInput == "3")
-		{
-			Console.WriteLine("Not supported yet.");
-			Program.PressEnterToContinue();
-		}
-		else if (userInput == "4")
-		{
-			Console.WriteLine("Not supported yet.");
-			Program.PressEnterToContinue();
-		}
-		else if (userInput == "5")
-		{
-			Console.WriteLine("Not supported yet.");
-			Program.PressEnterToContinue();
 		}
 		else if (userInput != "x")
 		{
@@ -169,6 +162,108 @@ static class ExampleGame
 
 	static void BuyAbility()
 	{
+		Console.Clear();
+		Console.WriteLine("LEARN NEW ABILITIES");
+		Console.WriteLine("");
+		Console.WriteLine("Which ability are you interested in learning?");
+		Console.WriteLine("(You have " + PlayerData.gold + " gold)");
+		Console.WriteLine("");
+
+		for (int i = 0; i < abilityStore.Length; i++)
+		{
+			Console.WriteLine("[" + (i + 1) + "] " + abilityStore[i].ability.name + " (" + abilityStore[i].price + " gold)");
+		}
+		Console.WriteLine("[X] Cancel");
+
+		string userInput = Console.ReadLine().ToLower();
+		int numericInput;
+		bool validNumberEntered = int.TryParse(userInput, out numericInput);
+		
+		if (validNumberEntered && numericInput > 0 && numericInput <= abilityStore.Length)
+		{
+			AbilityStoreItem selectedItem = abilityStore[numericInput - 1];
+
+			if (selectedItem.price > PlayerData.gold)
+			{
+				Console.WriteLine("You don't have enough gold!");
+				Program.PressEnterToContinue();
+				return;
+			}
+
+			List<Character> possibleRecipients = new List<Character>();
+
+			foreach (PlayerCharacter hero in PlayerData.party)
+			{
+				if (hero.abilities.Contains(selectedItem.ability) == false)
+				{
+					possibleRecipients.Add(hero);
+				}
+			}
+
+			if (possibleRecipients.Count > 0)
+			{
+				Console.Clear();
+				Console.WriteLine(selectedItem.ability.name.ToUpper());
+				Console.WriteLine("");
+				Console.WriteLine(selectedItem.ability.menuDescription);
+				Console.WriteLine(selectedItem.ability.GetCostDescription());
+				Console.WriteLine("");
+				Console.WriteLine("PRICE: " + selectedItem.price + " gold");
+				Console.WriteLine("(You have " + PlayerData.gold + " gold)");
+				Console.WriteLine("");
+				Console.WriteLine("Who should learn this ability?");
+
+				// List out all of the heroes in the player's party.
+				for (int i = 0; i < PlayerData.party.Count; i++)
+				{
+					int heroNumber = i + 1;
+					Console.WriteLine("[" + heroNumber + "] " + PlayerData.party[i].name);
+				}
+				Console.WriteLine("[X] Cancel");
+
+				// Get the user's input
+				userInput = Console.ReadLine().ToLower();
+
+				// Back out of this function now if the player canceled.
+				if (userInput == "x")
+				{
+					return;
+				}
+
+				// Translate the user's input to a numerical value so we can use it to identify which character was selected
+				int selectedHeroNumber;
+				bool heroIndexValid = int.TryParse(userInput, out selectedHeroNumber);
+
+				// If a valid hero was selected, add the ability to their moveset
+				if (heroIndexValid && selectedHeroNumber > 0 && selectedHeroNumber <= PlayerData.party.Count)
+				{
+					PlayerCharacter selectedHero = PlayerData.party[selectedHeroNumber - 1];
+					selectedHero.abilities.Add(selectedItem.ability);
+					PlayerData.gold -= selectedItem.price;
+
+					Console.Clear();
+					Console.WriteLine(selectedHero.name + " learned " + selectedItem.ability.name + "!");
+					Program.PressEnterToContinue();
+				}
+
+				// If the player made an invalid selection, notify them.
+				else
+				{
+					Console.WriteLine("Invalid selection.");
+					Program.PressEnterToContinue();
+				}
+			}
+			else
+			{
+				Console.WriteLine("Everyone on your party already knows the '" + selectedItem.ability + "' ability!");
+				Program.PressEnterToContinue();
+			}
+		}
+		else if (userInput != "x")
+		{
+			Console.WriteLine("Invalid input.");
+			Program.PressEnterToContinue();
+		}
 	}
 
 	static void HireHero()

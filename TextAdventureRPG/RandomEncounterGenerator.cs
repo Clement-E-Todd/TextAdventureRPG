@@ -4,18 +4,12 @@ class RandomEncounterGenerator
 {
 	Enemy[] possibleEnemies;
 
-	int minimumEnemyLevel;
-	int maximumEnemyLevel;
-
 	int minimumEnemyCount;
 	int maximumEnemyCount;
 
-	public RandomEncounterGenerator(Enemy[] possibleEnemies, int minimumEnemyLevel, int maximumEnemyLevel, int minimumEnemyCount, int maximumEnemyCount)
+	public RandomEncounterGenerator(Enemy[] possibleEnemies, int minimumEnemyCount, int maximumEnemyCount)
 	{
 		this.possibleEnemies = possibleEnemies;
-
-		this.minimumEnemyLevel = minimumEnemyLevel;
-		this.maximumEnemyLevel = maximumEnemyLevel;
 
 		this.minimumEnemyCount = minimumEnemyCount;
 		this.maximumEnemyCount = maximumEnemyCount;
@@ -30,8 +24,6 @@ class RandomEncounterGenerator
 		{
 			int randomEnemyIndex = Program.random.Next(possibleEnemies.Length);
 			enemies[i] = possibleEnemies[randomEnemyIndex].CreateCopy();
-
-			int randomEnemyLevel = Program.random.Next(minimumEnemyLevel, maximumEnemyLevel + 1);
 		}
 
 		EnemyEncounter encounter = new EnemyEncounter(enemies, true);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 class EnemyEncounter
 {
@@ -35,7 +36,7 @@ class EnemyEncounter
 			{
 				if (ability is TemporaryAbility)
 				{
-					((TemporaryAbility)ability).OnUserTurnStart();
+					((TemporaryAbility)ability).OnCharacterTurnStart(nextCharacter);
 				}
 			}
 
@@ -154,7 +155,21 @@ class EnemyEncounter
 
 		for (int i = 0; i < hero.abilities.Count; i++)
 		{
-			Console.WriteLine("[" + (i + 1) + "] " + hero.abilities[i].name);
+			string abilityMessage = "[" + (i + 1) + "] " + hero.abilities[i].name;
+			string costMessage = hero.abilities[i].GetCostDescription();
+
+			if (costMessage != null)
+			{
+				abilityMessage += " " + costMessage;
+			}
+
+			if (hero.abilities[i].CanCharacterAffordCosts(hero) == false)
+			{
+				Console.ForegroundColor = ConsoleColor.DarkGray;
+			}
+
+			Console.WriteLine(abilityMessage);
+			Console.ForegroundColor = ConsoleColor.Gray;
 		}
 		Console.WriteLine("[R] Run");
 
@@ -170,19 +185,26 @@ class EnemyEncounter
 			{
 				Ability abilityToUse = hero.abilities[numericInput - 1];
 
-				Character[] targetParty = null;
-				if (abilityToUse.targetType == Ability.TargetType.SingleAlly || abilityToUse.targetType == Ability.TargetType.AllAllies)
+				if (abilityToUse.CanCharacterAffordCosts(hero))
 				{
-					targetParty = PlayerData.party.ToArray();
+					Character[] targetParty = null;
+					if (abilityToUse.targetType == Ability.TargetType.SingleAlly || abilityToUse.targetType == Ability.TargetType.AllAllies)
+					{
+						targetParty = PlayerData.party.ToArray();
+					}
+					else if (abilityToUse.targetType == Ability.TargetType.SingleOpponent || abilityToUse.targetType == Ability.TargetType.AllOpponents)
+					{
+						targetParty = enemies;
+					}
+
+					abilityToUse.Perform(hero, targetParty);
+
+					turnComplete = true;
 				}
-				else if (abilityToUse.targetType == Ability.TargetType.SingleOpponent || abilityToUse.targetType == Ability.TargetType.AllOpponents)
+				else
 				{
-					targetParty = enemies;
+					Console.WriteLine(hero.name + " can't afford that ability right now.");
 				}
-
-				abilityToUse.Perform(hero, targetParty);
-
-				turnComplete = true;
 			}
 			else if (userInput == "R")
 			{
@@ -207,20 +229,36 @@ class EnemyEncounter
 
 	void EnemyTurn(Enemy enemy)
 	{
-		Ability abilityToUse = enemy.abilities[Program.random.Next(enemy.abilities.Count)];
-
-		Character[] targetParty = null;
-		if (abilityToUse.targetType == Ability.TargetType.SingleAlly || abilityToUse.targetType == Ability.TargetType.AllAllies)
+		List<Ability> possibleAbilities = new List<Ability>();
+		foreach (Ability ability in enemy.abilities)
 		{
-			targetParty = enemies;
-		}
-		else if (abilityToUse.targetType == Ability.TargetType.SingleOpponent || abilityToUse.targetType == Ability.TargetType.AllOpponents)
-		{
-			targetParty = PlayerData.party.ToArray();
+			if (ability.CanCharacterAffordCosts(enemy))
+			{
+				possibleAbilities.Add(ability);
+			}
 		}
 
-		abilityToUse.Perform(enemy, targetParty);
-		Program.PressEnterToContinue();
+		if (possibleAbilities.Count > 0)
+		{
+			Ability abilityToUse = possibleAbilities[Program.random.Next(possibleAbilities.Count)];
+
+			Character[] targetParty = null;
+			if (abilityToUse.targetType == Ability.TargetType.SingleAlly || abilityToUse.targetType == Ability.TargetType.AllAllies)
+			{
+				targetParty = enemies;
+			}
+			else if (abilityToUse.targetType == Ability.TargetType.SingleOpponent || abilityToUse.targetType == Ability.TargetType.AllOpponents)
+			{
+				targetParty = PlayerData.party.ToArray();
+			}
+
+			abilityToUse.Perform(enemy, targetParty);
+			Program.PressEnterToContinue();
+		}
+		else
+		{
+			Console.WriteLine(enemy.name + " finds " + enemy.pronouns.themself + " unable to act.");
+		}
 	}
 
 	void CheckForBattleCompletion()

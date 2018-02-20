@@ -12,14 +12,16 @@ class TemporaryAbility : Ability
 	{
 		public Effect effect;
 		public Character target;
+		public Character performer;
 		public int potency;
 		public bool isOffensiveAbility;
 		public int turnsRemaining;
 
-		public EffectRecord(Effect effect, Character target, int potency, bool isOffensiveAbility, int duration)
+		public EffectRecord(Effect effect, Character target, Character performer, int potency, bool isOffensiveAbility, int duration)
 		{
 			this.effect = effect;
 			this.target = target;
+			this.performer = performer;
 			this.potency = potency;
 			this.isOffensiveAbility = isOffensiveAbility;
 
@@ -33,27 +35,30 @@ class TemporaryAbility : Ability
 		this.duration = duration;
 	}
 
-	public void OnUserTurnStart()
+	public void OnCharacterTurnStart(Character character)
 	{
 		// Loop backwards through the list of recent effects and remove them if they've expired. We have to loop backwards
 		// to prevent the value of i from becoming incorrect if we remove something from the middle of the list.
 		for (int i = recentEffects.Count - 1; i >= 0; i--)
 		{
-			recentEffects[i].turnsRemaining -= 1;
-
-			if (recentEffects[i].turnsRemaining <= 0)
+			if (recentEffects[i].performer == character)
 			{
-				UndoEffect(recentEffects[i]);
-				recentEffects.RemoveAt(i);
+				recentEffects[i].turnsRemaining -= 1;
+
+				if (recentEffects[i].turnsRemaining <= 0)
+				{
+					UndoEffect(recentEffects[i]);
+					recentEffects.RemoveAt(i);
+				}
 			}
 		}
 	}
 
-	protected override void ApplyEffectToTarget(Effect effect, Character target, int potency, bool isOffensiveAbility)
+	protected override void ApplyEffectToTarget(Effect effect, Character target, Character performer, int potency, bool isOffensiveAbility)
 	{
-		base.ApplyEffectToTarget(effect, target, potency, isOffensiveAbility);
+		base.ApplyEffectToTarget(effect, target, performer, potency, isOffensiveAbility);
 
-		EffectRecord record = new EffectRecord(effect, target, potency, isOffensiveAbility, duration);
+		EffectRecord record = new EffectRecord(effect, target, performer, potency, isOffensiveAbility, duration);
 		recentEffects.Add(record);
 	}
 

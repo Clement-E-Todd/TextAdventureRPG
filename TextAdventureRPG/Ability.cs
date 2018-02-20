@@ -176,7 +176,7 @@ class Ability
 				WriteStatChangeDescription(target.name, effect.stat, potency, isOffensiveAbility);
 
 				// Apply the effect with the calculated potency to the target
-				ApplyEffectToTarget(effect, target, potency, isOffensiveAbility);
+				ApplyEffectToTarget(effect, target, performer, potency, isOffensiveAbility);
 
 				// Pause briefly between displaying each effect
 				Thread.Sleep(500);
@@ -224,7 +224,7 @@ class Ability
 		return potency;
 	}
 
-	protected virtual void ApplyEffectToTarget(Effect effect, Character target, int potency, bool isOffensiveAbility)
+	protected virtual void ApplyEffectToTarget(Effect effect, Character target, Character performer, int potency, bool isOffensiveAbility)
 	{
 		if (isOffensiveAbility)
 		{
@@ -244,6 +244,28 @@ class Ability
 				target.currentStats.Set(Stats.Type.SP, target.baseStats.Get(Stats.Type.SP));
 			}
 		}
+	}
+
+	public bool CanCharacterAffordCosts(Character character)
+	{
+		if (costsToUse == null)
+		{
+			return true;
+		}
+
+		bool canUseAbility = true;
+
+		for (int j = 0; j < costsToUse.Length; j++)
+		{
+			if ((costsToUse[j].type == Ability.CostToUse.Type.HP && character.currentStats.Get(Stats.Type.HP) <= costsToUse[j].amount) ||
+				(costsToUse[j].type == Ability.CostToUse.Type.SP && character.currentStats.Get(Stats.Type.SP) < costsToUse[j].amount))
+			{
+				canUseAbility = false;
+				break;
+			}
+		}
+
+		return canUseAbility;
 	}
 
 	private void WriteBattleDescription(Character performer, Character target = null)
@@ -296,5 +318,28 @@ class Ability
 		}
 
 		Console.WriteLine(targetName + "'s " + stat + " " + verb + " by " + amountToApply + "!");
+	}
+
+	public string GetCostDescription()
+	{
+		if (costsToUse != null && costsToUse.Length > 0)
+		{
+			string abilityMessage = "(Costs ";
+
+			for (int j = 0; j < costsToUse.Length; j++)
+			{
+				abilityMessage += costsToUse[j].amount + " " + costsToUse[j].type;
+
+				if (j < costsToUse.Length - 1)
+				{
+					abilityMessage += " and ";
+				}
+			}
+			abilityMessage += " to use)";
+
+			return abilityMessage;
+		}
+
+		return null;
 	}
 }

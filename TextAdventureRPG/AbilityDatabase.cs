@@ -101,6 +101,25 @@
 			Ability.TargetType.SingleOpponent,
 			2);
 
+		// HEAVY ATTACK
+		public static Ability heavyAttack = new Ability(
+			"Heavy Attack",
+			"Put your weight into your attack to deal extra damage.",
+			"<PERFORMER:NAME> deals a heavy blow to <TARGET:NAME>!",
+			new Ability.CostToUse[]
+			{
+				new Ability.CostToUse(Ability.CostToUse.Type.SP, 5),
+				new Ability.CostToUse(Ability.CostToUse.Type.HP, 5)
+			},
+			new Ability.Effect[]
+			{
+				new Ability.Effect(
+					Stats.Type.HP,
+					Ability.Effect.SkillType.Physical,
+					1.25f)
+			},
+			Ability.TargetType.SingleOpponent);
+
 		// JIGGLE
 		public static Ability jiggle = new Ability(
 			"Jiggle",
@@ -115,6 +134,24 @@
 					0.5f)
 			},
 			Ability.TargetType.SelfOnly);
+
+		// SOOTHE
+		public static Ability soothe = new Ability(
+			"Soothe",
+			"Cast a gentle healing aura to slightly recover one ally's HP.",
+			"<PERFORMER:NAME> casts a soothing aura on <TARGET:NAME>!",
+			new Ability.CostToUse[]
+			{
+				new Ability.CostToUse(Ability.CostToUse.Type.SP, 10)
+			},
+			new Ability.Effect[]
+			{
+				new Ability.Effect(
+					Stats.Type.HP,
+					Ability.Effect.SkillType.Magical,
+					0.25f)
+			},
+			Ability.TargetType.SingleAlly);
 
 		/**
 		* ENEMY ABILITY LISTS
