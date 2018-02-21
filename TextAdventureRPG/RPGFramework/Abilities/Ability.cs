@@ -21,17 +21,10 @@ class Ability
 	// spend to use the ability (HP or SP) and how much.
 	public struct CostToUse
 	{
-		// Does the ability consume SP or HP?
-		public enum Type
-		{
-			HP,
-			SP
-		}
-
-		public Type type;
+		public Stats.Type type;
 		public int amount;
 
-		public CostToUse(Type type, int amount)
+		public CostToUse(Stats.Type type, int amount)
 		{
 			this.type = type;
 			this.amount = amount;
@@ -190,6 +183,15 @@ class Ability
 				Thread.Sleep(500);
 			}
 		}
+
+		// Reduce the performer's SP and / or HP based on the abilit's cost
+		if (costsToUse != null)
+		{
+			foreach (CostToUse cost in costsToUse)
+			{
+				performer.currentStats.Subtract(cost.type, cost.amount);
+			}
+		}
 	}
 
 	// Get the amount that this ability should affect the target, based on the performer's strength if the
@@ -267,8 +269,8 @@ class Ability
 
 		for (int j = 0; j < costsToUse.Length; j++)
 		{
-			if ((costsToUse[j].type == Ability.CostToUse.Type.HP && character.currentStats.Get(Stats.Type.HP) <= costsToUse[j].amount) ||
-				(costsToUse[j].type == Ability.CostToUse.Type.SP && character.currentStats.Get(Stats.Type.SP) < costsToUse[j].amount))
+			if ((costsToUse[j].type == Stats.Type.HP && character.currentStats.Get(Stats.Type.HP) <= costsToUse[j].amount) ||
+				(costsToUse[j].type == Stats.Type.SP && character.currentStats.Get(Stats.Type.SP) < costsToUse[j].amount))
 			{
 				canUseAbility = false;
 				break;

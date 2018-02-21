@@ -13,7 +13,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> sprays a blast of acid!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 25)
+			new Ability.CostToUse(Stats.Type.SP, 25)
 		},
 		new Ability.Effect[]
 		{
@@ -85,7 +85,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> dives from high in the sky, <PERFORMER:THEIR> movement is a blur!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 15)
+			new Ability.CostToUse(Stats.Type.SP, 15)
 		},
 		new Ability.Effect[]
 		{
@@ -104,7 +104,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> closes <PERFORMER:THEIR> eyes and focuses...\nEnergy visibly flows from <PERFORMER:THEIR> body!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.HP, 15)
+			new Ability.CostToUse(Stats.Type.HP, 15)
 		},
 		new Ability.Effect[]
 		{
@@ -122,8 +122,8 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> unleashes a massive blast of flaming breath!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 30),
-			new Ability.CostToUse(Ability.CostToUse.Type.HP, 10)
+			new Ability.CostToUse(Stats.Type.SP, 30),
+			new Ability.CostToUse(Stats.Type.HP, 10)
 		},
 		new Ability.Effect[]
 		{
@@ -141,7 +141,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> closes <PERFORMER:THEIR> eyes and focuses...",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.HP, 5)
+			new Ability.CostToUse(Stats.Type.HP, 5)
 		},
 		new Ability.Effect[]
 		{
@@ -159,7 +159,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> glares piercingly at <TARGET:NAME>!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 20)
+			new Ability.CostToUse(Stats.Type.SP, 20)
 		},
 		new Ability.Effect[]
 		{
@@ -178,7 +178,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> casts a soothing aura on <TARGET:NAME>!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 10)
+			new Ability.CostToUse(Stats.Type.SP, 10)
 		},
 		new Ability.Effect[]
 		{
@@ -196,7 +196,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> casts a soothing aura on <PERFORMER:THEIR> team!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 30)
+			new Ability.CostToUse(Stats.Type.SP, 30)
 		},
 		new Ability.Effect[]
 		{
@@ -214,8 +214,8 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> deals a heavy blow to <TARGET:NAME>!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 5),
-			new Ability.CostToUse(Ability.CostToUse.Type.HP, 5)
+			new Ability.CostToUse(Stats.Type.SP, 5),
+			new Ability.CostToUse(Stats.Type.HP, 5)
 		},
 		new Ability.Effect[]
 		{
@@ -248,7 +248,7 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> conjures a mighty magic blast!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 30)
+			new Ability.CostToUse(Stats.Type.SP, 30)
 		},
 		new Ability.Effect[]
 		{
@@ -266,8 +266,8 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> attacks in a wide, spinning arc!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 10),
-			new Ability.CostToUse(Ability.CostToUse.Type.HP, 5)
+			new Ability.CostToUse(Stats.Type.SP, 10),
+			new Ability.CostToUse(Stats.Type.HP, 5)
 		},
 		new Ability.Effect[]
 		{
@@ -285,8 +285,8 @@ static class ExampleAbilities
 		"<PERFORMER:NAME> lends <TARGET:NAME> <PERFORMER:THEIR> strength!",
 		new Ability.CostToUse[]
 		{
-			new Ability.CostToUse(Ability.CostToUse.Type.SP, 10),
-			new Ability.CostToUse(Ability.CostToUse.Type.HP, 25)
+			new Ability.CostToUse(Stats.Type.SP, 10),
+			new Ability.CostToUse(Stats.Type.HP, 25)
 		},
 		new Ability.Effect[]
 		{
